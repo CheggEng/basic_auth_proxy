@@ -3,7 +3,7 @@ a simple proxy to provide basic auth to a HTTP service
 
 ### Usage
 ```
-node main.js --proxy_target="http://something.tld/" --basic_auth_user="foo" --basic_auth_pass="bar"
+node main.js --proxy_target="http://something.tld/" --basic_auth_user="foo" --basic_auth_pass="bar" --port 5050
 ```
 
 ### Requirements

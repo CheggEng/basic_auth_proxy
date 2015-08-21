@@ -45,6 +45,7 @@ var argv = require('yargs')
 var proxy_target = argv.proxy_target;
 var basic_auth_user = argv.basic_auth_user;
 var basic_auth_pass = argv.basic_auth_pass;
+var port = argv.port;
 
 //
 // Generate base64 encoding
@@ -55,6 +56,20 @@ var auth_header = new Buffer(basic_auth_user+":"+basic_auth_pass).toString('base
 // Proxy server
 //
 var proxy = httpProxy.createProxyServer({});
+// Listen for the `error` event on `proxy`.
+proxy.on('error', function (err, req, res) {
+  res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+
+  res.end('Something went wrong.');
+});
+
+proxy.on('close', function (req, socket, head) {
+  // view disconnected websocket connections
+  console.log('Client disconnected');
+});
+
 var server = http.createServer(function(req, res) {
   console.log('HEADER:\n'+JSON.stringify(req.headers, null, 2) + '\nURL: '+ req.url);
   proxy.web(req, res, {
@@ -70,5 +85,5 @@ var server = http.createServer(function(req, res) {
 //
 // Start 'er up
 //
-server.listen(5050);
-console.log('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '5050'.yellow);
+server.listen(port);
+console.log('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + port);
